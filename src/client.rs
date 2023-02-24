@@ -7,9 +7,9 @@ pub mod payments {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut client = BitcoinClient::connect("http://[::1]:50051").await?;
+    let mut client:BitcoinClient<tonic::transport::Channel> = BitcoinClient::connect("http://[::1]:50051").await?;
 
-    let request = tonic::Request::new(
+    let request:tonic::Request<BtcPaymentRequest> = tonic::Request::new(
         BtcPaymentRequest {
             from_addr: "123456".to_owned(),
             to_addr: "654321".to_owned(),
@@ -17,7 +17,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     );
 
-    let response = client.send_payment(request).await?;
+    let response:tonic::Response<payments::BtcPaymentResponse> = client.send_payment(request).await?;
 
     println!("RESPONSE={:?}", response);
 
